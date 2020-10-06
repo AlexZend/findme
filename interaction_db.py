@@ -3,7 +3,7 @@ import datetime
 import uuid
 
 
-MongoURI = 'mongodb://<dbuser>:<dbpassword>@<URI>/<database>' // To connect using a driver via the standard MongoDB URI
+MongoURI = 'mongodb://<dbuser>:<dbpassword>@<URI>/<database>' # To connect using a driver via the standard MongoDB URI
 
 client = MongoClient(MongoURI, retryWrites=False)
 findmedstu = client.findmedstu
