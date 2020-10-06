@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Find me DSTU</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <!-- Vue loading plugin-->
+    <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3"></script>
+	<link href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3/dist/vue-loading.css" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+        crossorigin="anonymous">
+
+    <!-- GoogleFonts -->
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400" rel="stylesheet">
+
+    <!-- CSS -->
+    <style>
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            line-height: 1em;
+        }
+
+        .split-top {
+            margin-top: 1rem;
+        }
+
+        .split-bottom{
+        	margin-bottom: 1rem
+        }
+
+        .no-split-bottom{
+        	margin-bottom: 0rem
+        }
+
+        .split-right {
+            margin-right: 1rem;
+        }
+
+        .hr {
+		    border: 0;
+		    border-top: 1px solid rgba(0,0,0,.1);
+		}
+        .logo-user {
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            margin: auto;
+            max-width: 100%;
+            max-height: 100%;
+            font-size: 1.5em
+        }
+        .user-card-img-overlay {
+		    position: absolute;
+		    top: 0;
+		    right: 0;
+		    bottom: 50%;
+		    left: 0;
+		    padding: 1.25rem;
+		}
+		.fade-enter-active, .fade-leave-active {
+			transition: opacity .8s;
+		}
+		.fade-enter, .fade-leave-to {
+			opacity: 0;
+		}
+
+
+		.slide-fade-enter-active {
+			transition: all .6s ease;
+		}
+		.slide-fade-leave-active {
+			transition: all .4s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+		}
+		.slide-fade-enter, .slide-fade-leave-to {
+		  transform: translateX(50px);
+		  opacity: 0;
+		}
+
+    </style>
+
+    <!-- JS -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="./javascript.js"></script>
+    <script defer src="face-api.min.js"></script>
+
+</head>
+
+<body>
+    <div id="app">
+        <div class="split-top"></div>
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light split-bottom">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="logo-user">
+                    <img class="split-right" src="/icon/icon.svg" height="60" alt="">
+                </div>
+
+                <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Search face</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Add face</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Sign in</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="custom-file">
+  				<input type="file" class="custom-file-input" @change="onFileChange">
+  				<label class="custom-file-label" for="customFile">Tap and choose photo </label>
+			</div>
+
+            <div class="row">
+            	<transition name="fade">
+	            	<div v-if='message.success' class="col-xs-12 col-sm-12 col-md-12">
+	            		<div class="alert alert-success split-top no-split-bottom" role="alert">
+			            	{{message.success}}
+						</div>
+	            	</div>
+	            </transition>
+	            <transition name="fade">
+	            	<div v-if='message.info' class="col-xs-12 col-sm-12 col-md-12">
+	            		<div class="alert alert-info split-top no-split-bottom" role="alert">
+			            	{{message.info}}
+						</div>
+	            	</div>
+	            </transition>
+	            <transition name="fade">
+	            	<div v-if='message.warning' class="col-xs-12 col-sm-12 col-md-12">
+	            		<div class="alert alert-warning split-top no-split-bottom" role="alert">
+			            	{{message.warning}}
+						</div>
+	            	</div>
+	            </transition>
+	            <transition name="fade">
+	            	<div v-if='message.danger' class="col-xs-12 col-sm-12 col-md-12">
+	            		<div class="alert alert-danger split-top no-split-bottom" role="alert">
+			            	{{message.danger}}
+						</div>
+	            	</div>
+	            </transition>
+
+            	<template v-if='uploadPhoto'>
+            		<transition name="slide-fade">
+				        <div v-if='uploadPhoto' class="col-xs-12 col-sm-6 col-md-6">
+				            <div class="card bg-white split-top">
+				            	<img class="card-img" v-bind:src='uploadPhoto'>
+				            </div>
+				        </div>
+			    	</transition>
+			        <transition name="slide-fade">
+			            <div v-if='bestСard' class="col-xs-12 col-sm-6 col-md-6">
+			            	<div class="card bg-white split-top">
+			            		<img class="card-img-top" v-bind:src="bestСard.path">
+			            		<div class="user-card-img-overlay">
+			            			<h3><span class="badge badge-pill badge-success">{{bestСard.similarity}}%</span></h3>
+			            		</div>
+			            		<div class="card-body">
+			            			<h3 align="center"><b>{{bestСard.name}}</b></h3>
+						            <button type="button" v-bind:id="bestСard.path.split('/')[1].split('.')[0]" v-on:click="confirmRecognition" class="btn btn-outline-success btn-block split-top"><i class="fas fa-thumbs-up"></i></button>
+			            		</div>
+			            	</div>
+			            </div>
+		        	</transition>
+		            <transition name="slide-fade">
+			            <div v-if = '!bestСard' class="col-xs-12 col-sm-6 col-md-6">
+			            	<div class="card text-center split-top">
+								<div class="card-header">Oops!</div>
+								<div class="card-body">
+									<p class="card-text">It seems it was not possible to find a person with the same face. But nevertheless, you can familiarize yourself with the search results that are presented below, perhaps the reference photograph of a person was taken too long and now it has a low level of similarity. You can also try uploading a more recent photo of a person or from a better angle.</p>
+									<a href="#" class="btn btn-primary">Go somewhere</a>
+								</div>
+							</div>
+			            </div>
+		            </transition>
+            	</template>
+            	
+            </div>
+            <hr>
+            <h4 v-if="uploadPhoto">Other results</h4>
+            <div class="row">
+                <div v-for="faceCard in faceCards" class="col-xs-5 col-sm-6 col-md-3">
+                    <div class="card bg-white split-top">
+                        <img class="card-img-top" v-bind:src="faceCard.path">
+                        <div class="user-card-img-overlay">
+                        	<h4 class="card-title"><span class="badge badge-pill badge-primary">{{faceCard.similarity}}%</span></h4>
+                        </div>
+                        <div class="card-body">
+                        	<h5 align="center"><b>{{faceCard.name}}</b></h5>
+                            <button type="button" v-bind:id="faceCard.path.split('/')[1].split('.')[0]" v-on:click="confirmRecognition" class="btn btn-outline-success btn-block"><i class="fas fa-thumbs-up"></i></button>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
